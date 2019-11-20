@@ -1,17 +1,15 @@
 # Soybean crush spread
 #
-# Below is soybean crush spread, a value of soymeal and oil made 
-# from a ton of soybeans less the cots of soybeans, expressed as 
+# Soybean crush spread is a value of soymeal and soy oil made 
+# from a ton of soybeans less the costs of soybeans, expressed as 
 # percentage of soybean price. 
-#
-# The data comes from FAO GIEWS food prices tool and the code for 
-# the chart is fully repoducible.
 #
 # Dataset permalink:
 # http://www.fao.org/giews/food-prices/tool/public/#/dataset/international?international=209_7_781_1_948,209_7_815_1_948,209_7_732_1_946,209_7_733_1_946&opt=monthly_nominal_tonne&tab=datatable&lang=en&utcstartdate=820454400000&utcenddate=1572566400000&btnZoomSelector=null
 #
 # Spread parameters:
 # CBOT Soybeans vs. DCE Soybean Meal and Soybean Oil – Crush Spread
+#
 
 doc = """Date-Monthly,"INTERNATIONAL PRICES, Export, US, Soybean (US, c.i.f. Rotterdam), US Dollar/tonne" Commodity Code: CMM120101,"INTERNATIONAL PRICES, Export, US, Soybeans US No.1 Yellow (Gulf), US Dollar/tonne" Commodity Code: CMM530403,"INTERNATIONAL PRICES, Export, Unspecified, Soybean meal (44/45%, Hamburg, f.o.b. ex-mill), US Dollar/tonne" Commodity Code: CMM120800,"INTERNATIONAL PRICES, Export, Unspecified, Soybean oil (Dutch, f.o.b. ex-mill), US Dollar/tonne" Commodity Code: CMM150700
 Nov-19,,352.27,,
@@ -302,13 +300,11 @@ Mar-96,295.00,,246.00,538.00
 Feb-96,299.00,,253.00,548.00
 Jan-96,305.00,,260.00,554.00"""
 
-
 #"INTERNATIONAL PRICES, Export, US, Soybean (US, c.i.f. Rotterdam), US Dollar/tonne" Commodity Code: CMM120101,
 #"INTERNATIONAL PRICES, Export, US, Soybeans US No.1 Yellow (Gulf), US Dollar/tonne" Commodity Code: CMM530403,
 #"INTERNATIONAL PRICES, Export, Unspecified, Soybean meal (44/45%, Hamburg, f.o.b. ex-mill), US Dollar/tonne" Commodity Code: CMM120800,
 #"INTERNATIONAL PRICES, Export, Unspecified, Soybean oil (Dutch, f.o.b. ex-mill), US Dollar/tonne" Commodity Code: CMM150700
 columns = "date beanr beang meal oil".split()
-
 
 from datetime import date 
 import io
@@ -336,6 +332,7 @@ df = pd.read_csv(io.StringIO(doc),
                  converters=dict(date=date_reader,
                                  oil=comma_reader), 
                  skiprows=1)
+
 df = df.sort_index()
 df['bean'] = (df.beanr + df.beang)/2
 df['spread'] = 0.8 * df.meal + 0.183 * df.oil - df.bean
@@ -350,15 +347,12 @@ t_ru = ("Разница цен между продуктами перерабо�
 t_en = ("Soybean crush spread, % of soybean price,\nactual vs 12-month moving average")
 
 
-
-from matplotlib.pyplot import figure
-k = 0.8
-figure(num=None, figsize=[k*6.4, k*4.8], dpi=80, facecolor='w', edgecolor='k')
-
 def make_date(year):
     return get(str(year),'YYYY').date()    
 
-def plot(pf, title):
+def plot(pf, title, filename='spread.png'):
+    my_dpi = 80
+    plt.figure(figsize=(506/my_dpi, 253/my_dpi), dpi=my_dpi)
     dates = [make_date(year) for year in (2000, 2020)]
     ax_ = pf.margin \
       .plot(
@@ -374,9 +368,10 @@ def plot(pf, title):
             color='teal',
             ax=ax_)
     ax_.set_xlabel("")  
+    plt.savefig(filename)
+    
 
-ax = plot(pf, t_en)
-plt.savefig('spread.png')
-
+plot(pf, t_en)
 latest = pf.dropna().iloc[-1,:]    
-print(latest) 
+print('Latest value (%s):' % latest.name.strftime('%b-%Y'), f'{latest.margin}%')
+print(f'12-month moving average: {latest.margin_ma}%') 
