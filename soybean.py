@@ -350,7 +350,7 @@ t_en = ("Soybean crush spread, % of soybean price,\nactual vs 12-month moving av
 def make_date(year):
     return get(str(year),'YYYY').date()    
 
-def plot(pf, title, filename='spread.png'):
+def plot(pf, title):
     my_dpi = 80
     plt.figure(figsize=(506/my_dpi, 253/my_dpi), dpi=my_dpi)
     dates = [make_date(year) for year in (2000, 2020)]
@@ -368,10 +368,12 @@ def plot(pf, title, filename='spread.png'):
             color='teal',
             ax=ax_)
     ax_.set_xlabel("")  
-    plt.savefig(filename)
+    return ax_
     
 
-plot(pf, t_en)
+ax = plot(pf, t_en)
+plt.savefig('spread.png', bbox_inches = 'tight')
+
 latest = pf.dropna().iloc[-1,:]    
 print('Latest value (%s):' % latest.name.strftime('%b-%Y'), f'{latest.margin}%')
 print(f'12-month moving average: {latest.margin_ma}%') 
