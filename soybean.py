@@ -343,7 +343,7 @@ pf = df[['margin', 'margin_ma']].multiply(100).round(1)
 
 t_ru = ("Разница цен между продуктами переработки сои\n"
      "и соевыми бобами ('краш-спред'),\n" 
-     "% от цены сырья, скользящая средняя за 12 месяцев")
+     "% от цены сырья, факт и скользящая средняя за 12 месяцев")
 t_en = ("Soybean crush spread, % of soybean price,\nactual vs 12-month moving average")
 
 
