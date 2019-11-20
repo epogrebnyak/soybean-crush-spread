@@ -10,4 +10,4 @@ Latest value (Oct-2019): 7.1%
 12-month moving average: 11.9%
 ```
 
-![](spread.py)
+![](https://raw.githubusercontent.com/epogrebnyak/soybean-crush-spread/master/spread.png)
